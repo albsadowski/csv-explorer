@@ -7,19 +7,16 @@ NPX = npx
 RM = rm -rf
 
 DIST = ./dist
-OUT = ./out
 SRC = ./src
 
 TS_SRC = $(shell find $(SRC) -type f -name '*.ts')
 TSX_SRC = $(shell find $(SRC) -type f -name '*.tsx')
 TS_ALL = $(TS_SRC) $(TSX_SRC)
-JS_SRC = $(patsubst $(SRC)%.ts,$(OUT)%.js,$(TS_SRC)) \
-		$(patsubst $(SRC)%.tsx,$(OUT)%.js,$(TSX_SRC))
 
 clean:
-	$(RM) $(DIST) $(OUT)
+	$(RM) $(DIST)
 
-build: build-static build-js build-css build-workers
+build: build-static build-js build-css build-workers build-ts
 
 build-static: $(DIST)/index.html $(DIST)/wasm/sql-wasm.wasm
 
@@ -44,13 +41,13 @@ $(DIST)/index.html: $(DIST)
 $(DIST)/wasm/sql-wasm.wasm: $(DIST)/wasm
 	$(CP) node_modules/sql.js/dist/sql-wasm.wasm $(DIST)/wasm/sql-wasm.wasm
 
-$(DIST)/app.js: $(DIST) $(JS_SRC)
+$(DIST)/app.js: $(DIST) $(TS_ALL)
 	$(NPM) run build:bundle
 
-$(DIST)/workers/database.js: $(DIST) $(JS_SRC)
+$(DIST)/workers/database.js: $(DIST) $(TS_ALL)
 	$(NPM) run build:workers
 
-$(JS_SRC): $(TS_ALL)
+build-ts: $(TS_ALL)
 	$(NPM) run build:ts
 
 $(DIST)/stylesheet.css: $(DIST) $(SRC)/main.css

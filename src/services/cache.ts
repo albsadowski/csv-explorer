@@ -66,8 +66,9 @@ export async function cache<T>(name: string, version = 1): Promise<Cache<T>> {
 				req.onerror = (evt) => {
 					reject(
 						new Error(
-							`Failed to persist in cache: ${(evt?.target as any)
-								?.errorCode}`,
+							`Failed to persist in cache: ${
+								(evt?.target as any)?.errorCode
+							}`,
 						),
 					)
 				}
@@ -86,8 +87,9 @@ export async function cache<T>(name: string, version = 1): Promise<Cache<T>> {
 				req.onerror = (evt) => {
 					reject(
 						new Error(
-							`Failed to fetch from cache: ${(evt?.target as any)
-								?.errorCode}`,
+							`Failed to fetch from cache: ${
+								(evt?.target as any)?.errorCode
+							}`,
 						),
 					)
 				}

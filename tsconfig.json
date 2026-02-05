@@ -10,7 +10,8 @@
 		"strict": true,
 		"module": "commonjs",
 		"moduleResolution": "node",
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"skipLibCheck": true
 	},
 	"files": ["./externals.d.ts"],
 	"include": ["src"]
