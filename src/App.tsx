@@ -90,7 +90,7 @@ export default function App(props: AppProps) {
 			<div className="flex flex-col">
 				<ActionBar>
 					<ActionButton
-						id="importButton"
+						id="importCsvButton"
 						label="Import File"
 						action={() => setShowImportModal(true)}
 					/>
