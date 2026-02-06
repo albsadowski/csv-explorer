@@ -26,39 +26,51 @@ export default function EntityList(props: EntityListProps) {
 		onSchemaChange()
 	}
 
+	if (tables.length === 0) {
+		return (
+			<div className="flex-1 flex items-center justify-center p-4 text-base-content/40 text-sm">
+				No tables imported
+			</div>
+		)
+	}
+
 	return (
-		<ul className="bg-neutral-50">
+		<ul className="menu menu-sm bg-base-100 flex-1 overflow-auto p-1">
 			{tables.map((table, ix) => (
-				<details
-					id={`entityList-${table.name}`}
-					key={ix}
-					className="hover:bg-neutral-100"
-				>
-					<summary className="flex flex-row justify-between p-1">
-						<div className="font-light text-sm self-center">
-							{table.name}
-						</div>
-						<div className="flex flex-row">
-							<ActionButton
-								id={`downloadButton-${table.name}`}
-								label="Download"
-								action={() => download(table.name)}
-							/>
-							<ActionButton
-								id={`dropButton-${table.name}`}
-								label="Drop"
-								action={() => drop(table.name)}
-							/>
-						</div>
-					</summary>
-					<ul>
-						{table.columns.map((col: string, ic: number) => (
-							<div key={ic} className="font-light text-xs p-1">
-								{col}
-							</div>
-						))}
-					</ul>
-				</details>
+				<li key={ix}>
+					<details id={`entityList-${table.name}`}>
+						<summary className="flex flex-row justify-between">
+							<span className="font-medium text-sm">
+								{table.name}
+							</span>
+							<span className="flex gap-1">
+								<ActionButton
+									id={`downloadButton-${table.name}`}
+									label="Download"
+									variant="ghost"
+									action={() => download(table.name)}
+								/>
+								<ActionButton
+									id={`dropButton-${table.name}`}
+									label="Drop"
+									variant="error"
+									action={() => drop(table.name)}
+								/>
+							</span>
+						</summary>
+						<ul className="ml-2 border-l border-base-300">
+							{table.columns.map(
+								(col: string, ic: number) => (
+									<li key={ic}>
+										<span className="text-xs text-base-content/60 py-0.5">
+											{col}
+										</span>
+									</li>
+								),
+							)}
+						</ul>
+					</details>
+				</li>
 			))}
 		</ul>
 	)

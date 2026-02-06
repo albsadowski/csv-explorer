@@ -47,12 +47,26 @@ export default function Spreadsheet(props: SpreadsheetProps) {
 	}, [data])
 
 	if (!data && error) {
-		return <pre className="bg-neutral-50">{error}</pre>
+		return (
+			<div className="p-4 bg-error/10 text-error text-sm font-mono">
+				{error}
+			</div>
+		)
 	}
 
 	if (!data || !data.length) {
-		return <div className="bg-neutral-50">No results</div>
+		return (
+			<div className="flex-1 flex items-center justify-center text-base-content/40 text-sm bg-base-100">
+				Run a query to see results
+			</div>
+		)
 	}
 
-	return <div id="spreadsheet" className="bg-neutral-50" ref={ref} />
+	return (
+		<div
+			id="spreadsheet"
+			className="bg-base-100 overflow-auto h-full"
+			ref={ref}
+		/>
+	)
 }

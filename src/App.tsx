@@ -21,7 +21,11 @@ interface ActionBarProps {
 }
 
 function ActionBar(props: ActionBarProps) {
-	return <div className="flex flex-row bg-neutral-200">{props.children}</div>
+	return (
+		<div className="flex flex-row items-center gap-1 bg-base-200 px-2 py-1 border-b border-base-300">
+			{props.children}
+		</div>
+	)
 }
 
 export default function App(props: AppProps) {
@@ -86,54 +90,78 @@ export default function App(props: AppProps) {
 	}
 
 	return (
-		<Split>
-			<div className="flex flex-col">
-				<ActionBar>
+		<div className="h-full flex flex-col bg-base-100">
+			<div className="navbar bg-base-200 border-b border-base-300 px-4 min-h-0 py-1">
+				<div className="flex-1">
+					<span className="text-lg font-semibold">
+						CSV Explorer
+					</span>
+				</div>
+				<div className="flex-none flex gap-1">
 					<ActionButton
 						id="importCsvButton"
 						label="Import File"
+						variant="outline"
 						action={() => setShowImportModal(true)}
 					/>
-					<ActionButton id="saveButton" label="Save" action={save} />
-				</ActionBar>
-				<EntityList
-					tables={tables}
-					sqlStore={sqlStore}
-					onSchemaChange={loadTables}
-				/>
-				{showImportModal && (
-					<Modal>
-						<ImportForm
-							sqlStore={sqlStore}
-							onClose={() => setShowImportModal(false)}
-							onDone={async () => {
-								await loadTables()
-								setShowImportModal(false)
-							}}
-						/>
-					</Modal>
-				)}
+					<ActionButton
+						id="saveButton"
+						label="Save"
+						variant="ghost"
+						action={save}
+					/>
+				</div>
 			</div>
-			<Split orientation={Orientation.Vertical}>
-				<div id="editorPane" className="w-full h-full flex flex-col">
-					<ActionBar>
-						<ActionButton
-							id="runButton"
-							label="Run"
-							action={runQuery}
-						/>
-					</ActionBar>
-					<div id="editor" className="grow overflow-auto">
-						<Editor
-							defaultLanguage="sql"
-							defaultValue={query}
-							value={query}
-							onChange={(value) => onEditorChange(value)}
+			<div className="flex-1 overflow-hidden">
+				<Split>
+					<div className="flex flex-col h-full">
+						<div className="px-2 py-2 text-sm font-medium text-base-content/70 bg-base-200 border-b border-base-300">
+							Tables
+						</div>
+						<EntityList
+							tables={tables}
+							sqlStore={sqlStore}
+							onSchemaChange={loadTables}
 						/>
 					</div>
-				</div>
-				<Spreadsheet data={result} error={queryError} />
-			</Split>
-		</Split>
+					<Split orientation={Orientation.Vertical}>
+						<div
+							id="editorPane"
+							className="w-full h-full flex flex-col"
+						>
+							<ActionBar>
+								<ActionButton
+									id="runButton"
+									label="Run"
+									variant="primary"
+									action={runQuery}
+								/>
+							</ActionBar>
+							<div id="editor" className="grow overflow-auto">
+								<Editor
+									defaultLanguage="sql"
+									defaultValue={query}
+									value={query}
+									onChange={(value) => onEditorChange(value)}
+								/>
+							</div>
+						</div>
+						<Spreadsheet data={result} error={queryError} />
+					</Split>
+				</Split>
+			</div>
+			{showImportModal && (
+				<Modal>
+					<ImportForm
+						sqlStore={sqlStore}
+						onClose={() => setShowImportModal(false)}
+						onDone={async () => {
+							await loadTables()
+							setShowImportModal(false)
+						}}
+					/>
+				</Modal>
+			)}
+		</div>
 	)
 }

@@ -1,18 +1,34 @@
+export type ButtonVariant =
+	| "ghost"
+	| "primary"
+	| "secondary"
+	| "error"
+	| "outline"
+
 interface ActionButtonProps {
 	readonly id: string
 	readonly label: string
 	readonly action: () => any
 	readonly disabled?: boolean
+	readonly variant?: ButtonVariant
+}
+
+const variantClass: Record<ButtonVariant, string> = {
+	ghost: "btn-ghost",
+	primary: "btn-primary",
+	secondary: "btn-secondary",
+	error: "btn-error",
+	outline: "btn-outline",
 }
 
 export default function ActionButton(props: ActionButtonProps) {
-	const { disabled, id, label, action } = props
+	const { disabled, id, label, action, variant = "ghost" } = props
 
 	return (
 		<button
 			id={id}
 			disabled={typeof disabled === "boolean" ? disabled : false}
-			className="my-0.5 mx-0.5 py-1 px-1 font-medium text-xs hover:bg-neutral-300"
+			className={`btn btn-sm ${variantClass[variant]}`}
 			onClick={action}
 		>
 			{label}

@@ -84,45 +84,54 @@ export default function ImportForm(props: ImportFormProps) {
 	}
 
 	return (
-		<div
-			id="importForm"
-			className="flex flex-col font-light text-sm p-2 space-y-4"
-		>
-			<div className="flex flex-row w-full space-x-4">
-				<span className="self-center">Table name</span>
+		<div id="importForm" className="flex flex-col gap-4">
+			<h3 className="text-lg font-semibold">Import File</h3>
+			<label className="form-control w-full">
+				<div className="label">
+					<span className="label-text">Table name</span>
+				</div>
 				<input
-					className="grow p-1 border border-neutral-400 rounded text-black bg-white"
+					className="input input-bordered w-full"
 					type="text"
+					placeholder="e.g. my_table"
 					value={name}
 					onChange={(evt) => setName(evt.target.value)}
 				/>
-			</div>
-			<input
-				type="file"
-				accept=".csv,.xpt"
-				onChange={(evt) => {
-					const selectedFile = evt.target.files?.[0]
-					setFile(selectedFile)
-					if (selectedFile && !name) {
-						const baseName = selectedFile.name
-							.split(".")[0]
-							.replace(/\W/g, "_")
-							.toLowerCase()
-						setName(baseName)
-					}
-				}}
-			/>
-			<div className="flex flex-row justify-center">
+			</label>
+			<label className="form-control w-full">
+				<div className="label">
+					<span className="label-text">File (.csv or .xpt)</span>
+				</div>
+				<input
+					type="file"
+					accept=".csv,.xpt"
+					className="file-input file-input-bordered w-full"
+					onChange={(evt) => {
+						const selectedFile = evt.target.files?.[0]
+						setFile(selectedFile)
+						if (selectedFile && !name) {
+							const baseName = selectedFile.name
+								.split(".")[0]
+								.replace(/\W/g, "_")
+								.toLowerCase()
+							setName(baseName)
+						}
+					}}
+				/>
+			</label>
+			<div className="flex flex-row justify-end gap-2 mt-2">
+				<ActionButton
+					id="importForm-cancelButton"
+					label="Cancel"
+					variant="ghost"
+					action={onClose}
+				/>
 				<ActionButton
 					id="importForm-importButton"
 					disabled={!name || !file}
 					label="Import"
+					variant="primary"
 					action={onImport}
-				/>
-				<ActionButton
-					id="importForm-cancelButton"
-					label="Cancel"
-					action={onClose}
 				/>
 			</div>
 		</div>

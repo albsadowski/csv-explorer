@@ -1,8 +1,12 @@
 @import "tailwindcss";
+@plugin "daisyui" {
+	themes: light --default, dark;
+}
 
 html,
 body,
 #app {
 	margin: 0;
 	height: 100%;
+	font-family: "Inter", sans-serif;
 }

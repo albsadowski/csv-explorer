@@ -48,7 +48,7 @@ function HorizontalSplit(props: SplitProps) {
 	}
 
 	return (
-		<div className="w-full h-full flex flex-row bg-neutral-50">
+		<div className="w-full h-full flex flex-row bg-base-100">
 			<div
 				ref={leftPane}
 				className="h-full overflow-auto"
@@ -61,7 +61,7 @@ function HorizontalSplit(props: SplitProps) {
 			</div>
 			<div
 				ref={gutter}
-				className="h-full cursor-col-resize select-none bg-neutral-300"
+				className="h-full cursor-col-resize select-none bg-base-300 hover:bg-primary/30 transition-colors"
 				style={{ width: `${props.gutterSizePx}px` }}
 				onMouseDown={gutterOnMouseDown}
 			></div>
@@ -114,7 +114,7 @@ function VerticalSplit(props: SplitProps) {
 	}
 
 	return (
-		<div className="w-full h-full flex flex-col bg-neutral-50">
+		<div className="w-full h-full flex flex-col bg-base-100">
 			<div
 				ref={topPane}
 				className="w-full overflow-auto"
@@ -127,7 +127,7 @@ function VerticalSplit(props: SplitProps) {
 			</div>
 			<div
 				ref={gutter}
-				className="w-full cursor-col-resize select-none bg-neutral-300"
+				className="w-full cursor-row-resize select-none bg-base-300 hover:bg-primary/30 transition-colors"
 				style={{ height: `${props.gutterSizePx}px` }}
 				onMouseDown={gutterOnMouseDown}
 			></div>
