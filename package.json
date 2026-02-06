@@ -1,13 +1,13 @@
 {
 	"name": "csv-explorer",
 	"version": "0.2.3",
-	"description": "Run SQL queries against CSV documents.",
+	"description": "Run SQL queries against CSV and XPT documents.",
 	"main": "dist/app.js",
 	"scripts": {
 		"build:ts": "tsc",
 		"build:css": "tailwindcss -i src/main.css -o dist/stylesheet.css",
-		"build:bundle": "esbuild src/index.tsx --minify --bundle --outfile=dist/app.js --target=chrome58,firefox57",
-		"build:workers": "esbuild src/workers/database.ts --minify --bundle --outfile=dist/workers/database.js --target=chrome58,firefox57 --external:fs --external:path --external:crypto",
+		"build:bundle": "esbuild src/index.tsx --bundle --outfile=dist/app.js --target=es2022 --sourcemap",
+		"build:workers": "esbuild src/workers/database.ts --bundle --outfile=dist/workers/database.js --target=es2022 --sourcemap --format=iife --platform=browser --external:fs --external:path --external:crypto",
 		"cypress:open": "cypress open",
 		"cypress:run": "cypress run",
 		"lint": "prettier --check .",
@@ -22,11 +22,11 @@
 		"@monaco-editor/react": "^4.7.0",
 		"csv-parse": "^6.1.0",
 		"csv-stringify": "^6.6.0",
-		"jspreadsheet-ce": "^5.0.4",
+		"jspreadsheet-ce": "^4.15.0",
 		"prop-types": "^15.8.1",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4",
-		"sql.js": "^1.13.0"
+		"sql.js": "^1.8.0"
 	},
 	"devDependencies": {
 		"@tailwindcss/cli": "^4.1.18",
@@ -34,14 +34,10 @@
 		"@types/react": "^19.2.13",
 		"@types/react-dom": "^19.2.3",
 		"@types/sql.js": "^1.4.4",
-		"autoprefixer": "^10.4.24",
-		"browserify": "^17.0.0",
 		"cypress": "^15.10.0",
 		"esbuild": "^0.27.2",
-		"http-serve": "^1.0.1",
-		"postcss": "^8.5.6",
-		"postcss-cli": "^11.0.1",
 		"prettier": "^3.8.1",
+		"serve": "^14.2.5",
 		"tailwindcss": "^4.1.18",
 		"typescript": "^5.9.3",
 		"wait-on": "^7.0.1"

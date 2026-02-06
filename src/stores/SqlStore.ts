@@ -6,7 +6,9 @@ export default class SqlStore {
 	private proxy: Promise<ProxyType<ExtDatabase>>
 
 	constructor(dbWorkerScript: string) {
-		this.proxy = workerProxy<ExtDatabase>(dbWorkerScript)
+		this.proxy = workerProxy<ExtDatabase>(dbWorkerScript, {
+			loadTimeout: 30000,
+		})
 	}
 
 	public async getAllTables(): Promise<string[]> {

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { parseCsv } from "src/services/csv"
+import { parseXpt } from "src/services/xpt"
 import SqlStore from "src/stores/SqlStore"
 import ActionButton from "./ActionButton"
 
@@ -16,41 +17,65 @@ function normalize(name: string): string {
 		.join("_")
 }
 
-function normalizeEntry(entry: string): string {
-	return entry.replace(/"/g, "").trim()
+function normalizeEntry(entry: any): string {
+	if (entry === null || entry === undefined) {
+		return ""
+	}
+	return String(entry).replace(/"/g, "").trim()
 }
 
 export default function ImportForm(props: ImportFormProps) {
 	const { sqlStore, onClose, onDone } = props
 
-	const [name, setName] = useState<string>()
+	const [name, setName] = useState<string>("")
 	const [file, setFile] = useState<File>()
 
-	function onImport() {
-		if (!file) {
+	async function onImport() {
+		if (!file || !name) {
 			return
 		}
 
+		const isXpt = file.name.toLowerCase().endsWith(".xpt")
 		const reader = new FileReader()
-		reader.readAsText(file, "utf-8")
+
+		if (isXpt) {
+			reader.readAsArrayBuffer(file)
+		} else {
+			reader.readAsText(file, "utf-8")
+		}
+
 		reader.onload = async (evt) => {
-			const data = await parseCsv(evt.target?.result as any)
-			const header = data[0].map(normalize)
+			try {
+				let data: any[][]
+				if (isXpt) {
+					data = await parseXpt(evt.target?.result as ArrayBuffer)
+				} else {
+					data = await parseCsv(evt.target?.result as string)
+				}
 
-			await sqlStore.exec(`CREATE TABLE ${name} (${header.join(", ")})`)
+				if (data.length === 0) {
+					throw new Error("Parsed data is empty")
+				}
 
-			data.slice(1).forEach(async (row: string[]) => {
-				const values = row
-					.map(normalizeEntry)
-					.map((entry) => `"${entry}"`)
-					.join(", ")
-				const stmt = `INSERT INTO ${name} VALUES (${values})`
-				try {
-					await sqlStore.exec(stmt)
-				} catch (_) {}
-			})
+				const header = data[0].map(normalize)
+				await sqlStore.exec(
+					`CREATE TABLE ${name} (${header.join(", ")})`,
+				)
 
-			onDone()
+				for (const row of data.slice(1)) {
+					const values = row
+						.map(normalizeEntry)
+						.map((entry) => `"${entry}"`)
+						.join(", ")
+					const stmt = `INSERT INTO ${name} VALUES (${values})`
+					try {
+						await sqlStore.exec(stmt)
+					} catch (e) {}
+				}
+				onDone()
+			} catch (e) {
+				console.error("Import failed:", e)
+			}
 		}
 		reader.onerror = (err) => {
 			console.error(err)
@@ -66,15 +91,26 @@ export default function ImportForm(props: ImportFormProps) {
 			<div className="flex flex-row w-full space-x-4">
 				<span className="self-center">Table name</span>
 				<input
-					className="grow p-1"
+					className="grow p-1 border border-neutral-400 rounded text-black bg-white"
 					type="text"
+					value={name}
 					onChange={(evt) => setName(evt.target.value)}
 				/>
 			</div>
 			<input
 				type="file"
-				accept=".csv"
-				onChange={(evt) => setFile(evt.target.files?.[0])}
+				accept=".csv,.xpt"
+				onChange={(evt) => {
+					const selectedFile = evt.target.files?.[0]
+					setFile(selectedFile)
+					if (selectedFile && !name) {
+						const baseName = selectedFile.name
+							.split(".")[0]
+							.replace(/\W/g, "_")
+							.toLowerCase()
+						setName(baseName)
+					}
+				}}
 			/>
 			<div className="flex flex-row justify-center">
 				<ActionButton

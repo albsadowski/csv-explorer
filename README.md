@@ -1,6 +1,6 @@
 # csv-explorer
 
-Run SQL queries against CSV documents.
+Run SQL queries against CSV and XPT (SAS Transport) documents.
 
 Built on top of [sql.js](https://sql.js.org/#/) for 100% in-browser experience.
 

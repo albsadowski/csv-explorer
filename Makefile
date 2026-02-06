@@ -18,7 +18,7 @@ clean:
 
 build: build-static build-js build-css build-workers build-ts
 
-build-static: $(DIST)/index.html $(DIST)/wasm/sql-wasm.wasm
+build-static: $(DIST)/index.html $(DIST)/wasm/sql-wasm-v1.wasm $(DIST)/serve.json
 
 build-js: $(DIST)/app.js
 
@@ -27,7 +27,7 @@ build-css: $(DIST)/stylesheet.css
 build-workers: $(DIST)/workers/database.js
 
 preview: build
-	$(NPX) http-serve $(DIST) -a localhost -p 8080
+	$(NPX) serve $(DIST) -l 8080
 
 $(DIST):
 	$(MKD) $(DIST)
@@ -38,8 +38,11 @@ $(DIST)/wasm:
 $(DIST)/index.html: $(DIST)
 	$(CP) public/index.html $(DIST)/index.html
 
-$(DIST)/wasm/sql-wasm.wasm: $(DIST)/wasm
-	$(CP) node_modules/sql.js/dist/sql-wasm.wasm $(DIST)/wasm/sql-wasm.wasm
+$(DIST)/serve.json: $(DIST)
+	$(CP) public/serve.json $(DIST)/serve.json
+
+$(DIST)/wasm/sql-wasm-v1.wasm: $(DIST)/wasm
+	$(CP) node_modules/sql.js/dist/sql-wasm.wasm $(DIST)/wasm/sql-wasm-v1.wasm
 
 $(DIST)/app.js: $(DIST) $(TS_ALL)
 	$(NPM) run build:bundle

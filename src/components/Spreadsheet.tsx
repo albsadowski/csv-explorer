@@ -13,29 +13,35 @@ export default function Spreadsheet(props: SpreadsheetProps) {
 	const { data, error } = props
 
 	useEffect(() => {
+		if (!data || data.length === 0) {
+			return
+		}
+
+		const lastResult = data[data.length - 1]
+		if (!lastResult || !lastResult.columns || !lastResult.values) {
+			return
+		}
+
 		const opts = {
-			columns:
-				(data &&
-					data.length &&
-					data[data.length - 1].columns.map((title: string) => ({
-						type: "text",
-						title,
-						readOnly: true,
-						width: 100,
-					}))) ||
-				[],
-			data: (data && data.length && data[data.length - 1].values) || [[]],
+			columns: lastResult.columns.map((title: string) => ({
+				type: "text",
+				title,
+				readOnly: true,
+				width: 100,
+			})),
+			data: lastResult.values,
 			onbeforepaste: () => false,
 			contextMenu: () => false,
 		}
-		const count = opts.data[0].length
-		const spreadsheet = ref?.current?.["jspreadsheet"] as any
 
-		if (spreadsheet) {
-			spreadsheet.destroy()
-		}
+		if (ref.current) {
+			const el = ref.current as any
+			if (el.jexcel) {
+				el.jexcel.destroy()
+			} else if (el.jspreadsheet) {
+				el.jspreadsheet.destroy()
+			}
 
-		if (count > 0) {
 			jspreadsheet(ref.current, opts)
 		}
 	}, [data])

@@ -6,7 +6,7 @@
 		"lib": ["es5", "es6", "ES2018", "dom"],
 		"jsx": "react-jsx",
 		"declaration": true,
-		"target": "es6",
+		"target": "ES2018",
 		"strict": true,
 		"module": "commonjs",
 		"moduleResolution": "node",

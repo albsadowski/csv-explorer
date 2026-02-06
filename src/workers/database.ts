@@ -6,9 +6,14 @@ import { ExtDatabase } from "../models/ExtDatabase"
 
 async function createDatabase(): Promise<ExtDatabase> {
 	try {
+		const wasmUrl = "/wasm/sql-wasm-v1.wasm"
+		const response = await fetch(wasmUrl)
+		const wasmBinary = await response.arrayBuffer()
+
 		const SQL = await initSqlJs({
-			locateFile: (_: string, __: string) => "../wasm/sql-wasm.wasm",
+			wasmBinary,
 		})
+
 		const localStore = await KVStore.tryCreate(LOCAL_STORE_NAME)
 		const data = await localStore?.get<Uint8Array>(LOCAL_STORE_SQLITE_KEY)
 
@@ -20,7 +25,8 @@ async function createDatabase(): Promise<ExtDatabase> {
 
 		return new _Database(data)
 	} catch (err) {
-		throw new Error(`Failed to initialize SQL.js: ${err}`)
+		console.error("Worker Error:", err)
+		throw err
 	}
 }
 
