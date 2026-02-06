@@ -59,15 +59,13 @@ export default function EntityList(props: EntityListProps) {
 							</span>
 						</summary>
 						<ul className="ml-2 border-l border-base-300">
-							{table.columns.map(
-								(col: string, ic: number) => (
-									<li key={ic}>
-										<span className="text-xs text-base-content/60 py-0.5">
-											{col}
-										</span>
-									</li>
-								),
-							)}
+							{table.columns.map((col: string, ic: number) => (
+								<li key={ic}>
+									<span className="text-xs text-base-content/60 py-0.5">
+										{col}
+									</span>
+								</li>
+							))}
 						</ul>
 					</details>
 				</li>

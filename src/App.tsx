@@ -93,9 +93,7 @@ export default function App(props: AppProps) {
 		<div className="h-full flex flex-col bg-base-100">
 			<div className="navbar bg-base-200 border-b border-base-300 px-4 min-h-0 py-1">
 				<div className="flex-1">
-					<span className="text-lg font-semibold">
-						CSV Explorer
-					</span>
+					<span className="text-lg font-semibold">CSV Explorer</span>
 				</div>
 				<div className="flex-none flex gap-1">
 					<ActionButton

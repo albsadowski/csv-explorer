@@ -29,11 +29,14 @@ export default function ImportForm(props: ImportFormProps) {
 
 	const [name, setName] = useState<string>("")
 	const [file, setFile] = useState<File>()
+	const [importing, setImporting] = useState(false)
 
 	async function onImport() {
-		if (!file || !name) {
+		if (!file || !name || importing) {
 			return
 		}
+
+		setImporting(true)
 
 		const isXpt = file.name.toLowerCase().endsWith(".xpt")
 		const reader = new FileReader()
@@ -75,60 +78,75 @@ export default function ImportForm(props: ImportFormProps) {
 				onDone()
 			} catch (e) {
 				console.error("Import failed:", e)
+				setImporting(false)
 			}
 		}
 		reader.onerror = (err) => {
 			console.error(err)
-			onDone()
+			setImporting(false)
 		}
 	}
 
 	return (
 		<div id="importForm" className="flex flex-col gap-4">
 			<h3 className="text-lg font-semibold">Import File</h3>
-			<label className="form-control w-full">
-				<div className="label">
-					<span className="label-text">Table name</span>
+			{importing ? (
+				<div className="flex flex-col items-center gap-3 py-6">
+					<span className="loading loading-spinner loading-lg"></span>
+					<span className="text-sm text-base-content/70">
+						Importing {file?.name}...
+					</span>
 				</div>
-				<input
-					className="input input-bordered w-full"
-					type="text"
-					placeholder="e.g. my_table"
-					value={name}
-					onChange={(evt) => setName(evt.target.value)}
-				/>
-			</label>
-			<label className="form-control w-full">
-				<div className="label">
-					<span className="label-text">File (.csv or .xpt)</span>
-				</div>
-				<input
-					type="file"
-					accept=".csv,.xpt"
-					className="file-input file-input-bordered w-full"
-					onChange={(evt) => {
-						const selectedFile = evt.target.files?.[0]
-						setFile(selectedFile)
-						if (selectedFile && !name) {
-							const baseName = selectedFile.name
-								.split(".")[0]
-								.replace(/\W/g, "_")
-								.toLowerCase()
-							setName(baseName)
-						}
-					}}
-				/>
-			</label>
+			) : (
+				<>
+					<label className="form-control w-full">
+						<div className="label">
+							<span className="label-text">Table name</span>
+						</div>
+						<input
+							className="input input-bordered w-full"
+							type="text"
+							placeholder="e.g. my_table"
+							value={name}
+							onChange={(evt) => setName(evt.target.value)}
+						/>
+					</label>
+					<label className="form-control w-full">
+						<div className="label">
+							<span className="label-text">
+								File (.csv or .xpt)
+							</span>
+						</div>
+						<input
+							type="file"
+							accept=".csv,.xpt"
+							className="file-input file-input-bordered w-full"
+							onChange={(evt) => {
+								const selectedFile = evt.target.files?.[0]
+								setFile(selectedFile)
+								if (selectedFile && !name) {
+									const baseName = selectedFile.name
+										.split(".")[0]
+										.replace(/\W/g, "_")
+										.toLowerCase()
+									setName(baseName)
+								}
+							}}
+						/>
+					</label>
+				</>
+			)}
 			<div className="flex flex-row justify-end gap-2 mt-2">
 				<ActionButton
 					id="importForm-cancelButton"
 					label="Cancel"
 					variant="ghost"
+					disabled={importing}
 					action={onClose}
 				/>
 				<ActionButton
 					id="importForm-importButton"
-					disabled={!name || !file}
+					disabled={!name || !file || importing}
 					label="Import"
 					variant="primary"
 					action={onImport}
