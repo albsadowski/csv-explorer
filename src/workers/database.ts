@@ -6,7 +6,7 @@ import { ExtDatabase } from "../models/ExtDatabase"
 
 async function createDatabase(): Promise<ExtDatabase> {
 	try {
-		const wasmUrl = "/wasm/sql-wasm-v1.wasm"
+		const wasmUrl = "../wasm/sql-wasm-v1.wasm"
 		const response = await fetch(wasmUrl)
 		const wasmBinary = await response.arrayBuffer()
 
