@@ -30,6 +30,7 @@ export default function ImportForm(props: ImportFormProps) {
 	const [name, setName] = useState<string>("")
 	const [file, setFile] = useState<File>()
 	const [importing, setImporting] = useState(false)
+	const [progress, setProgress] = useState<number>(0)
 
 	async function onImport() {
 		if (!file || !name || importing) {
@@ -65,16 +66,24 @@ export default function ImportForm(props: ImportFormProps) {
 					`CREATE TABLE ${name} (${header.join(", ")})`,
 				)
 
-				for (const row of data.slice(1)) {
-					const values = row
-						.map(normalizeEntry)
-						.map((entry) => `"${entry}"`)
-						.join(", ")
-					const stmt = `INSERT INTO ${name} VALUES (${values})`
-					try {
-						await sqlStore.exec(stmt)
-					} catch (e) {}
+				const rows = data
+					.slice(1)
+					.map((row: any[]) => row.map(normalizeEntry))
+
+				const CHUNK_SIZE = 50000
+				for (let i = 0; i < rows.length; i += CHUNK_SIZE) {
+					const chunk = rows.slice(i, i + CHUNK_SIZE)
+					await sqlStore.importRows(name, header, chunk)
+					setProgress(
+						Math.min(
+							100,
+							Math.round(
+								((i + chunk.length) / rows.length) * 100,
+							),
+						),
+					)
 				}
+
 				onDone()
 			} catch (e) {
 				console.error("Import failed:", e)
@@ -94,7 +103,8 @@ export default function ImportForm(props: ImportFormProps) {
 				<div className="flex flex-col items-center gap-3 py-6">
 					<span className="loading loading-spinner loading-lg"></span>
 					<span className="text-sm text-base-content/70">
-						Importing {file?.name}...
+						Importing {file?.name}...{" "}
+						{progress > 0 && `${progress}%`}
 					</span>
 				</div>
 			) : (

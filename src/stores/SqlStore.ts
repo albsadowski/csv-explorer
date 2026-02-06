@@ -84,4 +84,14 @@ export default class SqlStore {
 
 		return db.exec(stmt)
 	}
+
+	public async importRows(
+		table: string,
+		columns: string[],
+		rows: string[][],
+	): Promise<void> {
+		const db = await this.proxy
+
+		return db.importRows(table, columns, rows)
+	}
 }

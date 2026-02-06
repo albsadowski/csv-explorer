@@ -21,6 +21,30 @@ async function createDatabase(): Promise<ExtDatabase> {
 			async save(): Promise<void> {
 				return localStore?.set(LOCAL_STORE_SQLITE_KEY, this.export())
 			}
+
+			importRows(
+				table: string,
+				columns: string[],
+				rows: string[][],
+			): void {
+				const placeholders = columns.map(() => "?").join(", ")
+				const stmt = this.prepare(
+					`INSERT INTO ${table} VALUES (${placeholders})`,
+				)
+
+				this.exec("BEGIN TRANSACTION")
+				try {
+					for (const row of rows) {
+						stmt.run(row)
+					}
+					this.exec("COMMIT")
+				} catch (e) {
+					this.exec("ROLLBACK")
+					throw e
+				} finally {
+					stmt.free()
+				}
+			}
 		}
 
 		return new _Database(data)
